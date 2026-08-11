@@ -54,14 +54,18 @@ export default function AdminLoginPage({ onAdminLoginSuccess }) {
 
     } else {
       // Login Logic
+      const inputIdentifier = credentials.username.trim().toLowerCase();
       const storedAdmins = getStoredAdmins();
       const isStoredAdminValid = storedAdmins.some(
-        a => a.username === credentials.username.toLowerCase() && a.password === credentials.password
+        a => (
+          (a.username && a.username.toLowerCase() === inputIdentifier) ||
+          (a.email && a.email.toLowerCase() === inputIdentifier)
+        ) && a.password === credentials.password
       );
 
       if (
-        (credentials.username.toLowerCase() === 'admin' && credentials.password === 'admin123') ||
-        (credentials.username.toLowerCase() === 'atithya' && credentials.password === 'atithya123') ||
+        (inputIdentifier === 'admin' && credentials.password === 'admin123') ||
+        (inputIdentifier === 'atithya' && credentials.password === 'atithya123') ||
         isStoredAdminValid
       ) {
         setSuccess(true);
@@ -69,7 +73,7 @@ export default function AdminLoginPage({ onAdminLoginSuccess }) {
           onAdminLoginSuccess();
         }, 1000);
       } else {
-        setError('Invalid Admin Username or Password. Hint: use admin / admin123 or register a new admin account below.');
+        setError('Invalid Admin Username or Password.');
       }
     }
   };
@@ -134,13 +138,13 @@ export default function AdminLoginPage({ onAdminLoginSuccess }) {
             )}
 
             <div>
-              <label className="block font-bold text-stone-700 mb-1">Admin Username *</label>
+              <label className="block font-bold text-stone-700 mb-1">Admin Username or Email *</label>
               <div className="relative">
                 <User className="w-4 h-4 text-stone-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
-                  placeholder="admin"
+                  placeholder="Enter username or email"
                   value={credentials.username}
                   onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                   className="w-full pl-10 pr-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-800 font-semibold focus:outline-none focus:border-[#0F382C]"
