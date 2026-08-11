@@ -30,14 +30,14 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Check URL hash/path for #admin or /admin trigger
+  // Check URL hash/path for admin routes (/admin, /admin/login, /admin-login, #admin, etc.)
   useEffect(() => {
     const checkAdminRoute = () => {
-      const path = window.location.pathname;
-      const hash = window.location.hash;
-      const search = window.location.search;
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
 
-      if (hash === '#admin' || path.includes('/admin') || search.includes('admin')) {
+      if (hash.includes('admin') || path.includes('/admin') || search.includes('admin')) {
         if (!isAdminAuthenticated) {
           setActiveTab('admin-login');
         } else {
@@ -48,7 +48,11 @@ export default function App() {
 
     checkAdminRoute();
     window.addEventListener('hashchange', checkAdminRoute);
-    return () => window.removeEventListener('hashchange', checkAdminRoute);
+    window.addEventListener('popstate', checkAdminRoute);
+    return () => {
+      window.removeEventListener('hashchange', checkAdminRoute);
+      window.removeEventListener('popstate', checkAdminRoute);
+    };
   }, [isAdminAuthenticated]);
 
   // --- DYNAMIC DATA STATES ---
