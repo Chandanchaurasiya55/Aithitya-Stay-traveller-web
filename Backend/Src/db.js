@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const connectDB = async () => {
-  const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/atithya_stay';
+  const mongoURI = process.env.MONGO_URI;
   try {
     const conn = await mongoose.connect(mongoURI);
     console.log(`🌿 MongoDB Connected Successfully: ${conn.connection.host}`);
