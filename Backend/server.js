@@ -11,9 +11,13 @@ import { Post } from './Src/models/Post.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
-
-app.use(cors({ origin: CORS_ORIGIN }));
+// Dynamic CORS setup: Echoes requesting origin to allow Vercel previews, main domain, and localhost
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+}));
 app.use(express.json());
 
 // In-Memory Fallback Stores (if DB connection fails)
