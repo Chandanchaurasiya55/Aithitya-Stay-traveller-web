@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { 
   BarChart3, Inbox, Package, Hotel, PlusCircle, Trash2, CheckCircle2, 
-  Clock, XCircle, Search, Sparkles, Filter, Calendar as CalendarIcon, MapPin, Users, 
+  Clock, XCircle, Search, Sparkles, Filter, Calendar as CalendarIcon, MapPin, Users, User,
   Phone, Mail, ArrowUpRight, Image as ImageIcon, Eye, Tag, Check, RefreshCw, 
-  ShieldCheck, ChevronRight, CreditCard, DollarSign, Wallet, Receipt, X,
+  ShieldCheck, ChevronRight, CreditCard, DollarSign, Wallet, Receipt, X, LogOut,
   Share2, ThumbsUp, Star, Home, FileText, Bell, MessageSquare, Menu, Activity, TrendingUp, Layers
 } from 'lucide-react';
 
@@ -20,7 +20,8 @@ export default function AdminPanel({
   onAddHotel, 
   onDeleteHotel, 
   onAddPost, 
-  onDeletePost 
+  onDeletePost,
+  onAdminLogout
 }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
@@ -303,12 +304,22 @@ export default function AdminPanel({
             </div>
 
             {/* Bottom System Info */}
-            <div className="pt-6 border-t border-emerald-900/80 text-[11px] text-emerald-200/60 text-center space-y-1">
+            <div className="pt-6 border-t border-emerald-900/80 text-[11px] text-emerald-200/60 text-center space-y-2">
               <div className="flex items-center justify-center gap-1.5 font-bold text-white">
                 <ShieldCheck className="w-4 h-4 text-[#C8933E]" />
                 <span>Atithya Stay System v2.4</span>
               </div>
               <p>Secure Administrator Access</p>
+              {onAdminLogout && (
+                <button
+                  type="button"
+                  onClick={onAdminLogout}
+                  className="w-full bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/30 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 mt-2"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout Admin</span>
+                </button>
+              )}
             </div>
 
           </div>

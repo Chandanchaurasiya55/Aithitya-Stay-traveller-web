@@ -19,16 +19,45 @@ import AboutUsPage from './pages/AboutUsPage';
 import ContactUsPage from './pages/ContactUsPage';
 
 export default function App() {
-  // Navigation tab state ('home' default)
-  const [activeTab, setActiveTab] = useState('home');
+  // Modals & Auth State with localStorage Persistence
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('atithya_is_user_logged_in') === 'true';
+  });
 
-  // Modals & User/Admin Auth State
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    return localStorage.getItem('atithya_is_admin_auth') === 'true';
+  });
+
+  // Navigation tab state ('home' default)
+  const [activeTab, setActiveTab] = useState(() => {
+    const isAuth = localStorage.getItem('atithya_is_admin_auth') === 'true';
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    if (hash.includes('admin') || path.includes('/admin')) {
+      return isAuth ? 'admin' : 'admin-login';
+    }
+    const saved = localStorage.getItem('atithya_active_tab');
+    if (saved === 'admin' && !isAuth) return 'admin-login';
+    return saved || 'home';
+  });
+
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [enquiryTitle, setEnquiryTitle] = useState('');
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+
+  // Sync auth & tab state to localStorage
+  useEffect(() => {
+    localStorage.setItem('atithya_is_user_logged_in', isLoggedIn ? 'true' : 'false');
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    localStorage.setItem('atithya_is_admin_auth', isAdminAuthenticated ? 'true' : 'false');
+  }, [isAdminAuthenticated]);
+
+  useEffect(() => {
+    localStorage.setItem('atithya_active_tab', activeTab);
+  }, [activeTab]);
 
   // Check URL hash/path for admin routes (/admin, /admin/login, /admin-login, #admin, etc.)
   useEffect(() => {
@@ -36,9 +65,10 @@ export default function App() {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       const search = window.location.search.toLowerCase();
+      const storedAdminAuth = localStorage.getItem('atithya_is_admin_auth') === 'true';
 
       if (hash.includes('admin') || path.includes('/admin') || search.includes('admin')) {
-        if (!isAdminAuthenticated) {
+        if (!storedAdminAuth && !isAdminAuthenticated) {
           setActiveTab('admin-login');
         } else {
           setActiveTab('admin');
@@ -451,12 +481,21 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.setItem('atithya_is_user_logged_in', 'false');
     setActiveTab('home');
   };
 
   const handleAdminLoginSuccess = () => {
     setIsAdminAuthenticated(true);
+    localStorage.setItem('atithya_is_admin_auth', 'true');
     setActiveTab('admin');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminAuthenticated(false);
+    localStorage.setItem('atithya_is_admin_auth', 'false');
+    localStorage.setItem('atithya_active_tab', 'admin-login');
+    setActiveTab('admin-login');
   };
 
   return (
@@ -559,6 +598,7 @@ export default function App() {
             onDeleteHotel={handleDeleteHotel}
             onAddPost={handleAddPost}
             onDeletePost={handleDeletePost}
+            onAdminLogout={handleAdminLogout}
           />
         )}
       </main>
