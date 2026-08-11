@@ -9,7 +9,11 @@ const enquirySchema = new mongoose.Schema({
   guests: { type: String, default: '2 Guests' },
   date: { type: String, default: () => new Date().toISOString().split('T')[0] },
   notes: { type: String, default: '' },
-  status: { type: String, enum: ['Pending', 'Contacted', 'Resolved', 'Cancelled'], default: 'Pending' }
+  status: { type: String, enum: ['Pending', 'Contacted', 'Resolved', 'Cancelled', 'Confirmed'], default: 'Pending' },
+  paidAmount: { type: Number, default: 0 },
+  totalAmount: { type: Number, default: 0 },
+  paymentStatus: { type: String, enum: ['Paid', 'Partial', 'Unpaid'], default: 'Unpaid' },
+  paymentMethod: { type: String, default: 'UPI' }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

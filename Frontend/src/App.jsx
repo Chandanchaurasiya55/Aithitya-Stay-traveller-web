@@ -70,6 +70,10 @@ export default function App() {
         date: '2026-08-10',
         notes: 'Looking for lake view rooms and transport included.',
         status: 'Pending',
+        paidAmount: 5000,
+        totalAmount: 15000,
+        paymentStatus: 'Partial',
+        paymentMethod: 'UPI (GPay)',
         createdAt: new Date().toISOString(),
       },
       {
@@ -83,6 +87,10 @@ export default function App() {
         date: '2026-11-20',
         notes: 'Destination wedding venue inquiry for 3 days.',
         status: 'Contacted',
+        paidAmount: 50000,
+        totalAmount: 250000,
+        paymentStatus: 'Partial',
+        paymentMethod: 'Bank Transfer (NEFT)',
         createdAt: new Date().toISOString(),
       }
     ];
@@ -314,6 +322,17 @@ export default function App() {
     } catch (err) { console.log(err); }
   };
 
+  const handleUpdateEnquiryPayment = async (id, paymentData) => {
+    setEnquiries(prev => prev.map(e => (e.id === id || e._id === id) ? { ...e, ...paymentData } : e));
+    try {
+      await fetch(`${API_BASE_URL}/enquiries/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentData)
+      });
+    } catch (err) { console.log(err); }
+  };
+
   const handleDeleteEnquiry = async (id) => {
     setEnquiries(prev => prev.filter(e => e.id !== id && e._id !== id));
     try {
@@ -532,6 +551,7 @@ export default function App() {
             hotels={hotels}
             posts={posts}
             onUpdateEnquiryStatus={handleUpdateEnquiryStatus}
+            onUpdateEnquiryPayment={handleUpdateEnquiryPayment}
             onDeleteEnquiry={handleDeleteEnquiry}
             onAddPackage={handleAddPackage}
             onDeletePackage={handleDeletePackage}
